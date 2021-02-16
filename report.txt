@@ -1,0 +1,5 @@
+objective 1
+expose to the 8000 port
+objective 2,3,4
+split the request into parts and checks for /hello, /hi. If its not one of these two response 404 error
+if /hi change path to /hello and if the path is /hello response with hello world
