@@ -1,6 +1,21 @@
 import socketserver
 
 
+def requestFor200(pathname):
+    string = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n"
+    if pathname == "/hello":
+        string = string + "Content-Length: 12\r\n\r\nHello World!"
+    return string
+
+
+def requestFor404(pathname):
+    return "HTTP/1.1 404 Not Found\r\nContent-Type: text/plain\r\nContent-Length: 36\r\n\r\nThe requested content does not exist"
+
+
+def requestFor301(pathname):
+    return "HTTP/1.1 301 Moved Permanently\r\nLocation: /hello"
+
+
 class tcp(socketserver.BaseRequestHandler):
     def handle(self):
         data = self.request.recv(1024).strip()
@@ -17,11 +32,11 @@ class tcp(socketserver.BaseRequestHandler):
         print(path)
         print(headerLine)
         if request == "GET" and path == "/hello":
-            self.request.send("HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 12\r\n\r\nHello World!".encode())
+            self.request.send(requestFor200(path).encode())
         elif request == "GET" and path == "/hi":
-            self.request.send("HTTP/1.1 301 Moved Permanently\r\nLocation: /hello".encode())
+            self.request.send(requestFor301(path).encode())
         else:
-            self.request.send("HTTP/1.1 404 Not Found\r\nContent-Type: text/plain\r\nContent-Length: 36\r\n\r\nThe requested content does not exist".encode())
+            self.request.send(requestFor404(path).encode())
 
 
 if __name__ == "__main__":
