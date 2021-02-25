@@ -2,10 +2,18 @@ import socketserver
 
 
 def requestFor200(pathname):
-    string = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n"
+    string = "HTTP/1.1 200 OK\r\nContent-Type:"
     if pathname == "/hello":
-        string = string + "Content-Length: 12\r\n\r\nHello World!"
-    return string
+        string = string + " text/plain\r\nContent-Length: 12\r\n\r\nHello World!"
+        return string
+    if pathname == "/":
+        string = string +  " text/html; charset=utf-8\r\nX-Content-Type-Options: nosniff\r\nindex.html"
+        return "index.html"
+
+    if pathname == "/style.css":
+        return pathname
+    if pathname == "/functions.js":
+        return pathname
 
 
 def requestFor404(pathname):
@@ -35,6 +43,12 @@ class tcp(socketserver.BaseRequestHandler):
             self.request.send(requestFor200(path).encode())
         elif request == "GET" and path == "/hi":
             self.request.send(requestFor301(path).encode())
+        elif request == "GET" and path == "/":
+            self.request.send(requestFor200(path).encode())
+        elif request == "GET" and path == "/style.css":
+            self.request.send(requestFor200(path).encode())
+        elif request == "GET" and path == "/functions.js":
+            self.request.send(requestFor200(path))
         else:
             self.request.send(requestFor404(path).encode())
 
